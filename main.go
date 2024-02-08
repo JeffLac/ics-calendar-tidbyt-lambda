@@ -4,29 +4,34 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"syscall"
 
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/go-playground/validator/v10"
 	c "github.com/quesurifn/ics-calendar-tidbyt-lambda/calendar"
 	t "github.com/quesurifn/ics-calendar-tidbyt-lambda/types"
 	"go.uber.org/zap"
 )
 
-func HandleRequest(ctx context.Context, event *t.IcsRequest) (*t.BaseResponse[t.IcsResponse], error) {
+func HandleRequest(ctx context.Context, event *t.IcsRequest) (*t.BaseResponse, error) {
 	logger, err := zap.NewProduction()
 	if err != nil {
+
 		return nil, fmt.Errorf("failed to create logger: %w", err)
 	}
 
-	defer func() {
-		err := logger.Sync()
-		if err != nil && !errors.Is(err, syscall.ENOTTY) {
-			logger.Fatal(err.Error())
-		}
-	}()
-
 	if event == nil {
-		logger.Fatal("event is nil")
+		logger.Error("event is nil")
+		resp := GetErrorResponseType(errors.New("event is nil"))
+		return resp, fmt.Errorf("event is nil")
+	}
+
+	val := validator.New()
+	err = val.Struct(event)
+	if err != nil {
+		validationErrors := err.(validator.ValidationErrors)
+		logger.Error("Error", zap.Any("err", validationErrors))
+		resp := GetErrorResponseType(validationErrors)
+		return resp, err
 	}
 
 	cal := c.Calendar{
@@ -50,23 +55,26 @@ func HandleRequest(ctx context.Context, event *t.IcsRequest) (*t.BaseResponse[t.
 	data, err := cal.DownloadCalendar(event.ICSUrl)
 	if err != nil {
 		logger.Error("Error", zap.Any("err", err))
-		return nil, err
+		resp := GetErrorResponseType(err)
+		return resp, err
 	}
 
 	events, err := cal.ParseCalendar(data, event.TZ)
 	if err != nil {
 		logger.Error("Error", zap.Any("err", err))
-		return nil, err
+		resp := GetErrorResponseType(err)
+		return resp, err
 	}
 
 	nextEvent := cal.NextEvent(events)
 	if err != nil {
 		logger.Error("Error", zap.Any("err", err))
-		return nil, err
+		resp := GetErrorResponseType(err)
+		return resp, err
 	}
 
-	response := t.BaseResponse[t.IcsResponse]{
-		Data: t.IcsResponse{
+	response := t.BaseResponse{
+		Data: &t.IcsResponse{
 			EventName:         nextEvent.Name,
 			EventStartTime:    nextEvent.StartTime,
 			EventEndTime:      nextEvent.EndTime,
@@ -76,7 +84,6 @@ func HandleRequest(ctx context.Context, event *t.IcsRequest) (*t.BaseResponse[t.
 			OneMinuteWarning:  nextEvent.OneMinuteWarning,
 			InProgress:        nextEvent.InProgress,
 		},
-		Message: "Success",
 	}
 
 	return &response, nil
@@ -84,4 +91,13 @@ func HandleRequest(ctx context.Context, event *t.IcsRequest) (*t.BaseResponse[t.
 
 func main() {
 	lambda.Start(HandleRequest)
+}
+
+func GetErrorResponseType(err error) *t.BaseResponse {
+	return &t.BaseResponse{
+		Error: &t.ErrorResponse{
+			Error:   true,
+			Message: err.Error(),
+		},
+	}
 }

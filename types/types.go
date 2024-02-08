@@ -11,15 +11,20 @@ type Event struct {
 	InProgress        bool
 }
 
-type BaseResponse[t any] struct {
-	Data    t      `json:"data"`
-	Message string `json:"message"`
+type BaseResponse struct {
+	Data  *IcsResponse   `json:"data"`
+	Error *ErrorResponse `json:"message"`
 }
 
 type IcsRequest struct {
-	ICSUrl         string `json:"icsUrl"`
-	ShowInProgress bool   `json:"showInProgress"`
-	TZ             string `json:"tz"`
+	ICSUrl         string `json:"icsUrl" validate:"required,url"`
+	ShowInProgress bool   `json:"showInProgress" validate:"boolean"`
+	TZ             string `json:"tz" validate:"required,timezone"`
+}
+
+type ErrorResponse struct {
+	Error   bool   `json:"error"`
+	Message string `json:"message"`
 }
 
 type IcsResponse struct {
