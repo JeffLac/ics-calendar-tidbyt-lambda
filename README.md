@@ -1,4 +1,4 @@
-TIDY ICS NEXT EVENT
+#Tidbyt ICS Next Event
 
 
 This is a server designed for tidyt app in development that displays the next event from ICS url.
