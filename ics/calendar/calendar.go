@@ -108,6 +108,7 @@ func (c Calendar) NextEvent(events []t.Event, tz string) (*t.Event, error) {
 	next.Detail.IsTomorrow = time.Unix(now, 0).Day() == time.Unix(next.StartTime, 0).Day()-1
 	next.Detail.MinutesUntilStart = int(next.StartTime-now) / 60
 	next.Detail.MinutesUntilEnd = int(next.EndTime-now) / 60
+	next.Detail.HoursToEnd = int(next.EndTime-now) / 60 / 60
 
 	c.Logger.Info("NextEvent", zap.Any("nextEvent", next))
 	c.Logger.Info("Now", zap.Any("now", now))

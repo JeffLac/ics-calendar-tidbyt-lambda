@@ -85,6 +85,7 @@ func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 				IsThisWeek:          nextEvent.Detail.IsThisWeek,
 				MinutesUntilStart:   nextEvent.Detail.MinutesUntilStart,
 				MinutesUntilEnd:     nextEvent.Detail.MinutesUntilEnd,
+				HoursToEnd:          nextEvent.Detail.HoursToEnd,
 				ThirtyMinuteWarning: nextEvent.Detail.ThirtyMinuteWarning,
 				TenMinuteWarning:    nextEvent.Detail.TenMinuteWarning,
 				FiveMinuteWarning:   nextEvent.Detail.FiveMinuteWarning,

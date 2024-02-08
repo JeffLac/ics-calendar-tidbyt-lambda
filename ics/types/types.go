@@ -15,6 +15,7 @@ type EventDetail struct {
 	ThirtyMinuteWarning bool `json:"thirtyMinuteWarning"`
 	MinutesUntilStart   int  `json:"minutesUntilStart"`
 	MinutesUntilEnd     int  `json:"minutesUntilEnd"`
+	HoursToEnd          int  `json:"hoursToEnd"`
 	TenMinuteWarning    bool `json:"tenMinuteWarning"`
 	FiveMinuteWarning   bool `json:"fiveMinuteWarning"`
 	OneMinuteWarning    bool `json:"oneMinuteWarning"`
