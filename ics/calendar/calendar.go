@@ -97,6 +97,7 @@ func (c Calendar) NextEvent(events []t.Event, tz string) (*t.Event, error) {
 	tenMinutesFromStart := next.StartTime - 10*60
 	oneMinuteFromStart := next.StartTime - 60
 
+	next.Detail = &t.EventDetail{}
 	next.Detail.ThirtyMinuteWarning = now >= next.StartTime-30*60 && now < next.StartTime
 	next.Detail.FiveMinuteWarning = now >= fiveMinutesFromStart && now < tenMinutesFromStart
 	next.Detail.TenMinuteWarning = now >= tenMinutesFromStart && now < fiveMinutesFromStart
