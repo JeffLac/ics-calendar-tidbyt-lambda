@@ -77,10 +77,16 @@ func (c Calendar) ParseCalendar(data string, tz string) ([]t.Event, error) {
 	return events, nil
 }
 
-func (c Calendar) NextEvent(events []t.Event) *t.Event {
+func (c Calendar) NextEvent(events []t.Event, tz string) (*t.Event, error) {
 	var next t.Event
 
-	now := time.Now().Unix()
+	location, err := time.LoadLocation(tz)
+	if err != nil {
+		c.Logger.Error("Error", zap.Any("err", err))
+		return nil, err
+	}
+
+	now := time.Now().In(location).Unix()
 
 	sort.Slice(events, func(i, j int) bool {
 		return events[i].StartTime < events[j].StartTime
@@ -91,13 +97,17 @@ func (c Calendar) NextEvent(events []t.Event) *t.Event {
 	tenMinutesFromStart := next.StartTime - 10*60
 	oneMinuteFromStart := next.StartTime - 60
 
-	next.FiveMinuteWarning = now >= fiveMinutesFromStart && now < tenMinutesFromStart
-	next.TenMinuteWarning = now >= tenMinutesFromStart && now < fiveMinutesFromStart
-	next.OneMinuteWarning = now >= oneMinuteFromStart && now < tenMinutesFromStart
-	next.InProgress = now >= next.StartTime
+	next.Detail.ThirtyMinuteWarning = now >= next.StartTime-30*60 && now < next.StartTime
+	next.Detail.FiveMinuteWarning = now >= fiveMinutesFromStart && now < tenMinutesFromStart
+	next.Detail.TenMinuteWarning = now >= tenMinutesFromStart && now < fiveMinutesFromStart
+	next.Detail.OneMinuteWarning = now >= oneMinuteFromStart && now < tenMinutesFromStart
+	next.Detail.InProgress = now >= next.StartTime
+	next.Detail.IsThisWeek = now < next.StartTime+7*24*60*60
+	next.Detail.IsToday = time.Unix(now, 0).Day() == time.Unix(next.StartTime, 0).Day()
+	next.Detail.IsTomorrow = time.Unix(now, 0).Day() == time.Unix(next.StartTime, 0).Day()-1
 
 	c.Logger.Info("NextEvent", zap.Any("nextEvent", next))
 	c.Logger.Info("Now", zap.Any("now", now))
 
-	return &next
+	return &next, nil
 }

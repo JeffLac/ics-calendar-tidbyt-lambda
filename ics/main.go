@@ -67,7 +67,7 @@ func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		return GetErrorResponseType(err)
 	}
 
-	nextEvent := cal.NextEvent(events)
+	nextEvent, err := cal.NextEvent(events, event.TZ)
 	if err != nil {
 		logger.Error("Error", zap.Any("err", err))
 		return GetErrorResponseType(err)
@@ -75,14 +75,22 @@ func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 	response := t.BaseResponse{
 		Data: &t.IcsResponse{
-			EventName:         nextEvent.Name,
-			EventStartTime:    nextEvent.StartTime,
-			EventEndTime:      nextEvent.EndTime,
-			EventLocation:     nextEvent.Location,
-			TenMinuteWarning:  nextEvent.TenMinuteWarning,
-			FiveMinuteWarning: nextEvent.FiveMinuteWarning,
-			OneMinuteWarning:  nextEvent.OneMinuteWarning,
-			InProgress:        nextEvent.InProgress,
+			Name:      nextEvent.Name,
+			StartTime: nextEvent.StartTime,
+			EndTime:   nextEvent.EndTime,
+			Location:  nextEvent.Location,
+			Detail: &t.EventDetail{
+				IsToday:             nextEvent.Detail.IsToday,
+				IsTomorrow:          nextEvent.Detail.IsTomorrow,
+				IsThisWeek:          nextEvent.Detail.IsThisWeek,
+				MinutesUntilStart:   nextEvent.Detail.MinutesUntilStart,
+				MinutesUntilEnd:     nextEvent.Detail.MinutesUntilEnd,
+				ThirtyMinuteWarning: nextEvent.Detail.ThirtyMinuteWarning,
+				TenMinuteWarning:    nextEvent.Detail.TenMinuteWarning,
+				FiveMinuteWarning:   nextEvent.Detail.FiveMinuteWarning,
+				OneMinuteWarning:    nextEvent.Detail.OneMinuteWarning,
+				InProgress:          nextEvent.Detail.InProgress,
+			},
 		},
 	}
 

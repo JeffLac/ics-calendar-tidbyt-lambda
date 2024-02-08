@@ -1,14 +1,24 @@
 package types
 
 type Event struct {
-	Name              string
-	StartTime         int64
-	EndTime           int64
-	Location          *string
-	TenMinuteWarning  bool
-	FiveMinuteWarning bool
-	OneMinuteWarning  bool
-	InProgress        bool
+	Name      string
+	StartTime int64
+	EndTime   int64
+	Location  *string
+	Detail    *EventDetail
+}
+
+type EventDetail struct {
+	IsToday             bool `json:"isToday"`
+	IsTomorrow          bool `json:"isTomorrow"`
+	IsThisWeek          bool `json:"isThisWeek"`
+	ThirtyMinuteWarning bool `json:"thirtyMinuteWarning"`
+	MinutesUntilStart   int  `json:"minutesUntilStart"`
+	MinutesUntilEnd     int  `json:"minutesUntilEnd"`
+	TenMinuteWarning    bool `json:"tenMinuteWarning"`
+	FiveMinuteWarning   bool `json:"fiveMinuteWarning"`
+	OneMinuteWarning    bool `json:"oneMinuteWarning"`
+	InProgress          bool `json:"inProgress"`
 }
 
 type BaseResponse struct {
@@ -28,12 +38,9 @@ type ErrorResponse struct {
 }
 
 type IcsResponse struct {
-	EventName         string  `json:"eventName"`
-	EventStartTime    int64   `json:"eventStart"`
-	EventEndTime      int64   `json:"eventEnd"`
-	EventLocation     *string `json:"eventLocation"`
-	TenMinuteWarning  bool    `json:"tenMinuteWarning"`
-	FiveMinuteWarning bool    `json:"fiveMinuteWarning"`
-	OneMinuteWarning  bool    `json:"oneMinuteWarning"`
-	InProgress        bool    `json:"inProgress"`
+	Name      string       `json:"name"`
+	StartTime int64        `json:"start"`
+	EndTime   int64        `json:"end"`
+	Location  *string      `json:"location"`
+	Detail    *EventDetail `json:"detail"`
 }
