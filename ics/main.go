@@ -67,6 +67,26 @@ func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		return GetErrorResponseType(err)
 	}
 
+	if len(events) == 0 {
+		base := t.BaseResponse{
+			Data: nil,
+		}
+		respBytes, err := json.Marshal(base)
+		if err != nil {
+			logger.Error("Error", zap.Any("err", err))
+			return GetErrorResponseType(err)
+		}
+
+		return Response{
+			StatusCode:      200,
+			IsBase64Encoded: false,
+			Body:            string(respBytes),
+			Headers: map[string]string{
+				"Content-Type": "application/json",
+			},
+		}, nil
+	}
+
 	nextEvent, err := cal.NextEvent(events, event.TZ)
 	if err != nil {
 		logger.Error("Error", zap.Any("err", err))
