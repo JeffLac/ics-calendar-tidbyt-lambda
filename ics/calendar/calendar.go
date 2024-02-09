@@ -93,15 +93,13 @@ func (c Calendar) NextEvent(events []t.Event, tz string) (*t.Event, error) {
 	})
 	next = events[0]
 
-	fiveMinutesFromStart := next.StartTime - 5*60
-	tenMinutesFromStart := next.StartTime - 10*60
-	oneMinuteFromStart := next.StartTime - 60
+	minutesUntilStart := int(next.StartTime-now) / 60
 
 	next.Detail = &t.EventDetail{}
 	next.Detail.ThirtyMinuteWarning = now >= next.StartTime-30*60 && now < next.StartTime
-	next.Detail.FiveMinuteWarning = now >= fiveMinutesFromStart && now < tenMinutesFromStart
-	next.Detail.TenMinuteWarning = now >= tenMinutesFromStart && now < fiveMinutesFromStart
-	next.Detail.OneMinuteWarning = now >= oneMinuteFromStart && now < tenMinutesFromStart
+	next.Detail.FiveMinuteWarning = minutesUntilStart <= 5
+	next.Detail.TenMinuteWarning = minutesUntilStart <= 10
+	next.Detail.OneMinuteWarning = minutesUntilStart <= 1
 	next.Detail.InProgress = now >= next.StartTime
 	next.Detail.IsThisWeek = now < next.StartTime+7*24*60*60
 	next.Detail.IsToday = time.Unix(now, 0).Day() == time.Unix(next.StartTime, 0).Day()
