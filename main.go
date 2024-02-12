@@ -75,14 +75,11 @@ func HandleRequest(ctx context.Context, event *t.IcsRequest) (*t.BaseResponse, e
 
 	response := t.BaseResponse{
 		Data: &t.IcsResponse{
-			EventName:         nextEvent.Name,
-			EventStartTime:    nextEvent.StartTime,
-			EventEndTime:      nextEvent.EndTime,
-			EventLocation:     nextEvent.Location,
-			TenMinuteWarning:  nextEvent.TenMinuteWarning,
-			FiveMinuteWarning: nextEvent.FiveMinuteWarning,
-			OneMinuteWarning:  nextEvent.OneMinuteWarning,
-			InProgress:        nextEvent.InProgress,
+			EventName:      nextEvent.Name,
+			EventStartTime: nextEvent.StartTime,
+			EventEndTime:   nextEvent.EndTime,
+			EventLocation:  nextEvent.Location,
+			InProgress:     nextEvent.InProgress,
 		},
 	}
 

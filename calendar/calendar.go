@@ -78,22 +78,17 @@ func (c Calendar) ParseCalendar(data string, tz string) ([]t.Event, error) {
 }
 
 func (c Calendar) NextEvent(events []t.Event) *t.Event {
-	var next t.Event
-
+	if len(events) == 0 {
+		return nil
+	}
 	now := time.Now().Unix()
 
 	sort.Slice(events, func(i, j int) bool {
 		return events[i].StartTime < events[j].StartTime
 	})
-	next = events[0]
 
-	fiveMinutesFromStart := next.StartTime - 5*60
-	tenMinutesFromStart := next.StartTime - 10*60
-	oneMinuteFromStart := next.StartTime - 60
+	next := events[0]
 
-	next.FiveMinuteWarning = now >= fiveMinutesFromStart && now < tenMinutesFromStart
-	next.TenMinuteWarning = now >= tenMinutesFromStart && now < fiveMinutesFromStart
-	next.OneMinuteWarning = now >= oneMinuteFromStart && now < tenMinutesFromStart
 	next.InProgress = now >= next.StartTime
 
 	c.Logger.Info("NextEvent", zap.Any("nextEvent", next))
