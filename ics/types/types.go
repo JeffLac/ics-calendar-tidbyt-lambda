@@ -9,17 +9,13 @@ type Event struct {
 }
 
 type EventDetail struct {
-	IsToday             bool `json:"isToday"`
-	IsTomorrow          bool `json:"isTomorrow"`
-	IsThisWeek          bool `json:"isThisWeek"`
-	ThirtyMinuteWarning bool `json:"thirtyMinuteWarning"`
-	MinutesUntilStart   int  `json:"minutesUntilStart"`
-	MinutesUntilEnd     int  `json:"minutesUntilEnd"`
-	HoursToEnd          int  `json:"hoursToEnd"`
-	TenMinuteWarning    bool `json:"tenMinuteWarning"`
-	FiveMinuteWarning   bool `json:"fiveMinuteWarning"`
-	OneMinuteWarning    bool `json:"oneMinuteWarning"`
-	InProgress          bool `json:"inProgress"`
+	IsToday           bool `json:"isToday"`
+	IsTomorrow        bool `json:"isTomorrow"`
+	IsThisWeek        bool `json:"isThisWeek"`
+	MinutesUntilStart int  `json:"minutesUntilStart"`
+	MinutesUntilEnd   int  `json:"minutesUntilEnd"`
+	HoursToEnd        int  `json:"hoursToEnd"`
+	InProgress        bool `json:"inProgress"`
 }
 
 type BaseResponse struct {

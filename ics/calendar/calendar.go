@@ -96,7 +96,6 @@ func (c Calendar) NextEvent(events []t.Event, tz string) (*t.Event, error) {
 	next := events[0]
 
 	next.Detail = &t.EventDetail{}
-	next.Detail.ThirtyMinuteWarning = now >= next.StartTime-30*60 && now < next.StartTime
 	next.Detail.InProgress = now >= next.StartTime
 	next.Detail.IsThisWeek = now < next.StartTime+7*24*60*60
 	next.Detail.IsToday = time.Unix(now, 0).Day() == time.Unix(next.StartTime, 0).Day()
