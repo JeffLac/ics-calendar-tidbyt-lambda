@@ -78,7 +78,9 @@ func (c Calendar) ParseCalendar(data string, tz string) ([]t.Event, error) {
 }
 
 func (c Calendar) NextEvent(events []t.Event, tz string) (*t.Event, error) {
-	var next t.Event
+	if len(events) == 0 {
+		return nil, nil
+	}
 
 	location, err := time.LoadLocation(tz)
 	if err != nil {
@@ -91,7 +93,7 @@ func (c Calendar) NextEvent(events []t.Event, tz string) (*t.Event, error) {
 	sort.Slice(events, func(i, j int) bool {
 		return events[i].StartTime < events[j].StartTime
 	})
-	next = events[0]
+	next := events[0]
 
 	next.Detail = &t.EventDetail{}
 	next.Detail.ThirtyMinuteWarning = now >= next.StartTime-30*60 && now < next.StartTime
