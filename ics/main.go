@@ -9,8 +9,8 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/go-playground/validator/v10"
 
-	c "github.com/quesurifn/ics-tidy-lambda/ics/calendar"
-	t "github.com/quesurifn/ics-tidy-lambda/ics/types"
+	c "github.com/quesurifn/ics-calendar-tidbyt-lambda/ics/calendar"
+	t "github.com/quesurifn/ics-calendar-tidbyt-lambda/ics/types"
 	"go.uber.org/zap"
 )
 

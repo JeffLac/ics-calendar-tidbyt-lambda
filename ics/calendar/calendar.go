@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/apognu/gocal"
-	t "github.com/quesurifn/ics-tidy-lambda/ics/types"
+	t "github.com/quesurifn/ics-calendar-tidbyt-lambda/ics/types"
 	"go.uber.org/zap"
 	"gopkg.in/resty.v1"
 )
@@ -93,13 +93,8 @@ func (c Calendar) NextEvent(events []t.Event, tz string) (*t.Event, error) {
 	})
 	next = events[0]
 
-	minutesUntilStart := int(next.StartTime-now) / 60
-
 	next.Detail = &t.EventDetail{}
 	next.Detail.ThirtyMinuteWarning = now >= next.StartTime-30*60 && now < next.StartTime
-	next.Detail.FiveMinuteWarning = minutesUntilStart <= 5
-	next.Detail.TenMinuteWarning = minutesUntilStart <= 10
-	next.Detail.OneMinuteWarning = minutesUntilStart <= 1
 	next.Detail.InProgress = now >= next.StartTime
 	next.Detail.IsThisWeek = now < next.StartTime+7*24*60*60
 	next.Detail.IsToday = time.Unix(now, 0).Day() == time.Unix(next.StartTime, 0).Day()
