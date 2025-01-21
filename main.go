@@ -66,7 +66,9 @@ func HandleRequest(ctx context.Context, event *t.IcsRequest) (*t.BaseResponse, e
 		return resp, err
 	}
 
-	nextEvent := cal.NextEvent(events)
+	//need to pass events and the TZ because there is an adjustment in NextEvent
+	//for all day events
+	nextEvent := cal.NextEvent(events, event.TZ)
 	if err != nil {
 		logger.Error("Error", zap.Any("err", err))
 		resp := GetErrorResponseType(err)

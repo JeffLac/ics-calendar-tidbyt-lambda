@@ -21,10 +21,19 @@ E.g.
 ```
 {
     "data": {
-        "eventName": "HARVEST",
-        "eventStart": 1707498000,
-        "eventEnd": 1707501600,
-        "eventLocation": "https://us06web.zoom.us/j/xxx
+        "name": "HARVEST",
+        "start": 1707498000,
+        "end": 1707501600,
+        "location": "https://us06web.zoom.us/j/xxx
+        "detail": {
+            "isToday": true,
+            "isTomorrow": false,
+            "isThisWeek": true,
+            "minutesUntilStart": -736,
+            "minutesUntilEnd": 703,
+            "hoursToEnd": 11,
+            "inProgress": true  
+        }
         "tenMinuteWarning": false,
         "fiveMinuteWarning": false,
         "oneMinuteWarning": false,
