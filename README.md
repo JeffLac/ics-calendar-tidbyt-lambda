@@ -3,6 +3,8 @@
 
 This is a server designed for tidyt app in development that displays the next event from ICS url.
 
+It has been optimized to work on AWS Lambda Serverless. Deploy with make build, make zip, make deploy
+
 
 E.g.
 
@@ -34,10 +36,6 @@ E.g.
             "hoursToEnd": 11,
             "inProgress": true  
         }
-        "tenMinuteWarning": false,
-        "fiveMinuteWarning": false,
-        "oneMinuteWarning": false,
-        "inProgress": false
     },
     "message": null
 }

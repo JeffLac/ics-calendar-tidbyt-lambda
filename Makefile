@@ -5,9 +5,9 @@ build:
 
 clean:
 	rm -rf ./bin ./vendor Gopkg.lock
-
+	
 zip:
 	zip -j bin/hello.zip bin/bootstrap
 
-deploy: clean build
+deploy: build
 	sls deploy --verbose
