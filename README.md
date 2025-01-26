@@ -3,7 +3,7 @@
 
 This is a server designed for tidyt app in development that displays the next event from ICS url.
 
-It has been optimized to work on AWS Lambda Serverless. Deploy with make build, make zip, make deploy
+It has been optimized to work on AWS Lambda Serverless.
 
 
 E.g.
