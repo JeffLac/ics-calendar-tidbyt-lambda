@@ -144,6 +144,8 @@ func (c Calendar) NextEvent(events []t.Event, tz string) (*t.Event, error) {
 
 	next.Detail = &t.EventDetail{}
 	next.Detail.InProgress = now >= next.StartTime
+
+	//this isn't really needed because all events are in the next week thanks to what we passed to the parser in ParseCalendar
 	next.Detail.IsThisWeek = now < next.StartTime+7*24*60*60
 	//there's a bug here -- it is only looking to see if the event is today/tomorrow UTC
 	//adding In(location) to time.Unix which will convert the time to the correct timezone
