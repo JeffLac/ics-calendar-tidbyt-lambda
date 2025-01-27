@@ -107,6 +107,7 @@ func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 				MinutesUntilEnd:   nextEvent.Detail.MinutesUntilEnd,
 				HoursToEnd:        nextEvent.Detail.HoursToEnd,
 				InProgress:        nextEvent.Detail.InProgress,
+				IsAllDay:		   nextEvent.Detail.IsAllDay,
 			},
 		},
 	}

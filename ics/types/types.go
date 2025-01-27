@@ -6,6 +6,7 @@ type Event struct {
 	EndTime   int64
 	Location  *string
 	Detail    *EventDetail
+	IsAllDay  bool
 }
 
 type EventDetail struct {
@@ -16,6 +17,7 @@ type EventDetail struct {
 	MinutesUntilEnd   int  `json:"minutesUntilEnd"`
 	HoursToEnd        int  `json:"hoursToEnd"`
 	InProgress        bool `json:"inProgress"`
+	IsAllDay          bool `json:"isAllDay"`
 }
 
 type BaseResponse struct {

@@ -34,7 +34,8 @@ E.g.
             "minutesUntilStart": -736,
             "minutesUntilEnd": 703,
             "hoursToEnd": 11,
-            "inProgress": true  
+            "inProgress": true,  
+            "isAllDay": false
         }
     },
     "message": null

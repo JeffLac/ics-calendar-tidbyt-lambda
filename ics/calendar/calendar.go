@@ -111,6 +111,8 @@ func (c Calendar) NextEvent(events []t.Event, tz string) (*t.Event, error) {
 			//convert start and end times from UTC to the correct timezone
 			events[i].StartTime = events[i].StartTime - int64(offset)
 			events[i].EndTime = events[i].EndTime - int64(offset)
+			//IsAllDay gets set here because it can attach to the array
+			events[i].IsAllDay = true
 
 		}		
     }
@@ -134,7 +136,7 @@ func (c Calendar) NextEvent(events []t.Event, tz string) (*t.Event, error) {
 		})
 	}
 
-	//assume we are going to use the first event as the next event
+	//use the first event as the next event
 	next := events[0]
 
 	//but sometimes events that have already ended get pulled because of the 1 day look back
@@ -154,6 +156,8 @@ func (c Calendar) NextEvent(events []t.Event, tz string) (*t.Event, error) {
 	next.Detail.MinutesUntilStart = int(next.StartTime-now) / 60
 	next.Detail.MinutesUntilEnd = int(next.EndTime-now) / 60
 	next.Detail.HoursToEnd = int(next.EndTime-now) / 60 / 60
+	//IsAllDay is set above, but it belongs in the details
+	next.Detail.IsAllDay = next.IsAllDay
 
 	c.Logger.Info("NextEvent", zap.Any("nextEvent", next))
 	c.Logger.Info("Now", zap.Any("now", now))
