@@ -27,8 +27,10 @@ type BaseResponse struct {
 
 type IcsRequest struct {
 	ICSUrl         string `json:"icsUrl" validate:"required,url"`
-	ShowInProgress bool   `json:"showInProgress" validate:"boolean"`
 	TZ             string `json:"tz" validate:"required,timezone"`
+	ShowInProgress bool   `json:"showInProgress" validate:"boolean"`
+	IncludeAllDayEvents bool `json:"includeAllDayEvents" validate:"boolean"`
+	OnlyShowAllDayEvents bool `json:"onlyShowAllDayEvents" validate:"boolean"`
 }
 
 type ErrorResponse struct {

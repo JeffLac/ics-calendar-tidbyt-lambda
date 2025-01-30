@@ -81,7 +81,7 @@ func (c Calendar) ParseCalendar(data string, tz string) ([]t.Event, error) {
 	return events, nil
 }
 
-func (c Calendar) NextEvent(events []t.Event, tz string) (*t.Event, error) {
+func (c Calendar) NextEvent(events []t.Event, tz string, incAllDay bool, onlyAllDay bool, showInProgressEvents bool) (*t.Event, error) {
 	if len(events) == 0 {
 		return nil, nil
 	}
@@ -120,8 +120,8 @@ func (c Calendar) NextEvent(events []t.Event, tz string) (*t.Event, error) {
 	//build a list of events that are in progress
 	eventsInProgress := FilterInProgress(events)
 
-    //if there are events in progress,  use the filtered list
-	if len(eventsInProgress) > 0 {
+    //if there are events in progress and we are showing in progress events,  use the filtered list
+	if len(eventsInProgress) > 0 && showInProgressEvents{
 		events = eventsInProgress
 		//if there are multiple events in progress, sort by end time
 		//this will put timed events that are in progress ahead of all day events
@@ -129,7 +129,7 @@ func (c Calendar) NextEvent(events []t.Event, tz string) (*t.Event, error) {
 			return events[i].EndTime < events[j].EndTime
 		})
 	}else{
-		//there are no events in progress, so sort by events that are starting first
+		//there are no events in progress (or we are ignoring them), so sort by events that are starting first
 		//this will put all day events (starting at midnight) ahead of timed events
 		sort.Slice(events, func(i, j int) bool {
 			return events[i].StartTime < events[j].StartTime
@@ -138,16 +138,31 @@ func (c Calendar) NextEvent(events []t.Event, tz string) (*t.Event, error) {
 
 	//use the first event as the next event
 	next := events[0]
-
-	//but sometimes events that have already ended get pulled because of the 1 day look back
+	//need this to reference i outside of below for loop
+	slicePointer := 0
+	//but sometimes events that have already ended get pulled because of the 1 day look back, so look for events that have an EndTime after now
+	//also check the booleans to see if we should include all day events, only show all day events, or show in progress events
 	for i := 0; next.EndTime < now; i++ {
 		next = events[i]
+		slicePointer = i
+	}
+
+	events = events[slicePointer:]
+	slicePointer = 0
+
+	//if showInProgressEvents is true, display all events
+	//if showInProgressEvents is false, find an event that isn't in progress, starting at index 0
+	//need to add error handling here to make sure we don't go out of bounds
+	if (!showInProgressEvents){
+		for j := 0; next.StartTime <= now; j++ {
+			next = events[j]
+		}
 	}
 
 	next.Detail = &t.EventDetail{}
 	next.Detail.InProgress = now >= next.StartTime
 
-	//this isn't really needed because all events are in the next week thanks to what we passed to the parser in ParseCalendar
+	//this isn't really needed because all events are in the next week thanks to what we passed to the parser in ParseCalendar, but could eventually be useful
 	next.Detail.IsThisWeek = now < next.StartTime+7*24*60*60
 	//there's a bug here -- it is only looking to see if the event is today/tomorrow UTC
 	//adding In(location) to time.Unix which will convert the time to the correct timezone

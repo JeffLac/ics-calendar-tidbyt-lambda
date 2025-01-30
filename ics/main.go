@@ -87,7 +87,7 @@ func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		}, nil
 	}
 
-	nextEvent, err := cal.NextEvent(events, event.TZ)
+	nextEvent, err := cal.NextEvent(events, event.TZ, event.IncludeAllDayEvents, event.OnlyShowAllDayEvents, event.ShowInProgress)
 	if err != nil {
 		logger.Error("Error", zap.Any("err", err))
 		return GetErrorResponseType(err)
