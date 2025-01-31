@@ -39,20 +39,6 @@ func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 	cal := c.Calendar{
 		Logger: logger,
-		TZMap: map[string]string{
-			"Hawaii Standard Time":     "Pacific/Honolulu",
-			"Alaskan Standard Time":    "America/Anchorage",
-			"Alaskan Daylight Time":    "America/Anchorage",
-			"SA Pacific Standard Time": "America/Bogota",
-			"Pacific Standard Time":    "America/Los_Angeles",
-			"Pacific Daylight Time":    "America/Los_Angeles",
-			"Central Standard Time":    "America/Chicago",
-			"Central Daylight Time":    "America/Chicago",
-			"Mountain Standard Time":   "America/Denver",
-			"Mountain Daylight Time":   "America/Denver",
-			"Eastern Standard Time":    "America/New_York",
-			"Eastern Daylight Time":    "America/New_York",
-		},
 	}
 
 	data, err := cal.DownloadCalendar(event.ICSUrl)

@@ -14,7 +14,6 @@ import (
 
 type Calendar struct {
 	Logger *zap.Logger
-	TZMap  map[string]string
 }
 
 func (c Calendar) DownloadCalendar(url string) (string, error) {
@@ -29,28 +28,6 @@ func (c Calendar) DownloadCalendar(url string) (string, error) {
 }
 
 func (c Calendar) ParseCalendar(data string, tz string) ([]t.Event, error) {
-	gocal.SetTZMapper(func(s string) (*time.Location, error) {
-		override := ""
-		if val, ok := c.TZMap[s]; ok {
-			override = val
-		}
-		if override != "" {
-			loc, err := time.LoadLocation(override)
-			if err != nil {
-				c.Logger.Error("Error", zap.Any("err", err))
-				return nil, err
-			}
-			return loc, nil
-		}
-
-		loc, err := time.LoadLocation(s)
-		if err != nil {
-			c.Logger.Error("Error", zap.Any("err", err))
-			return nil, err
-		}
-		return loc, nil
-	})
-
 	usersLoc, err := time.LoadLocation(tz)
 	if err != nil {
 		c.Logger.Error("Error", zap.Any("err", err))
@@ -141,12 +118,12 @@ func (c Calendar) NextEvent(events []t.Event, tz string, incAllDay bool, onlyAll
 	//need this to reference i outside of below for loop
 	slicePointer := 0
 	//but sometimes events that have already ended get pulled because of the 1 day look back, so look for events that have an EndTime after now
-	//also check the booleans to see if we should include all day events, only show all day events, or show in progress events
 	for i := 0; next.EndTime < now; i++ {
 		next = events[i]
 		slicePointer = i
 	}
 
+	//reset events to only be the events identified above by reindexing
 	events = events[slicePointer:]
 	slicePointer = 0
 
