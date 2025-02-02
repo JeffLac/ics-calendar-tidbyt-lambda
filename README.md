@@ -15,8 +15,8 @@ E.g.
 {
     "icsUrl": "https://outlook.office365.com/owa/calendar/xxx.com/xxx/calendar.ics",
     "tz": "America/Chicago"
-	"includeAllDayEvents": "true"
-	"onlyShowAllDayEvents": "false"
+    "includeAllDayEvents": "true"
+    "onlyShowAllDayEvents": "false"
 }
 ```
 
