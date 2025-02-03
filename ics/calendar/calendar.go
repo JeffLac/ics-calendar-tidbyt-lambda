@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 	"fmt"
+	"errors"
 
 	"github.com/apognu/gocal"
 	t "github.com/quesurifn/ics-calendar-tidbyt-lambda/ics/types"
@@ -120,10 +121,8 @@ func (c Calendar) NextEvent(events []t.Event, tz string, incAllDay bool, onlyAll
 	//but sometimes events that have already ended get pulled because of the 1 day look back, so look for events that have an EndTime after now
 	for i := 0; next.EndTime < now; i++ {
 		if i >= len(events){
-			//return empty set
-			//additional error handling is needed to look for 0 length
-			events = events[:0]
-			return nil, nil
+			//return error because we got to the end of the array and didn't find any events that weren't in the past
+			return nil, errors.New("Events is empty")
 		}
 		next = events[i]
 		slicePointer = i

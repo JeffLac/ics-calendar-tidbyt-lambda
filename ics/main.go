@@ -14,6 +14,7 @@ import (
 	"go.uber.org/zap"
 )
 
+
 type Response events.APIGatewayProxyResponse
 
 func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (Response, error) {
@@ -75,29 +76,24 @@ func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 	nextEvent, err := cal.NextEvent(events, event.TZ, event.IncludeAllDayEvents, event.OnlyShowAllDayEvents, event.ShowInProgress)
 	if err != nil {
-		logger.Error("Error", zap.Any("err", err))
-		return GetErrorResponseType(err)
-	}
-
-	//if the events slice is empty
-	if len(events) == 0{
-		base := t.BaseResponse{
-			Data: nil,
-		}
-		respBytes, err := json.Marshal(base)
-		if err != nil {
-			logger.Error("Error", zap.Any("err", err))
-			return GetErrorResponseType(err)
-		}
-
-		return Response{
-			StatusCode:      200,
-			IsBase64Encoded: false,
-			Body:            string(respBytes),
-			Headers: map[string]string{
-				"Content-Type": "application/json",
-			},
-		}, nil
+		//the error here is events is empty, so return an empty response
+			base := t.BaseResponse{
+				Data: nil,
+			}
+			respBytes, err := json.Marshal(base)
+			if err != nil {
+				logger.Error("Error", zap.Any("err", err))
+				return GetErrorResponseType(err)
+			}
+	
+			return Response{
+				StatusCode:      200,
+				IsBase64Encoded: false,
+				Body:            string(respBytes),
+				Headers: map[string]string{
+					"Content-Type": "application/json",
+				},
+			}, nil
 	}
 
 	response := t.BaseResponse{
