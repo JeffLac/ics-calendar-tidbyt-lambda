@@ -30,6 +30,18 @@ func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		return GetErrorResponseType(err)
 	}
 
+	// Set default for ShowInProgress if not provided
+	if event.ShowInProgress == nil {
+		defaultTrue := true
+		event.ShowInProgress = true
+	}
+
+	// Set default for IncludeAllDayEvents if not provided
+	if event.IncludeAllDayEvents == nil {
+		defaultTrue := true
+		event.IncludeAllDayEvents = true
+	}
+
 	val := validator.New()
 	err = val.Struct(event)
 	if err != nil {

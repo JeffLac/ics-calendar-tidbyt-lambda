@@ -59,7 +59,10 @@ func (c Calendar) ParseCalendar(data string, tz string) ([]t.Event, error) {
 	return events, nil
 }
 
-func (c Calendar) NextEvent(events []t.Event, tz string, incAllDay bool, onlyAllDay bool, showInProgressEvents bool) (*t.Event, error) {
+func (c Calendar) NextEvent(events []t.Event, tz string, incAllDayPtr *bool, onlyAllDay bool, showInProgressEventsPtr *bool) (*t.Event, error) {
+	showInProgressEvents := *showInProgressEventsPtr
+	incAllDay := *incAllDayPtr
+
 	if len(events) == 0 {
 		return nil, nil
 	}
@@ -137,6 +140,10 @@ func (c Calendar) NextEvent(events []t.Event, tz string, incAllDay bool, onlyAll
 	//need to add error handling here to make sure we don't go out of bounds
 	if (!showInProgressEvents){
 		for j := 0; next.StartTime <= now; j++ {
+			if j >= len(events){
+				//return error because we got to the end of the array and didn't find any events that weren't in progress
+				return nil, errors.New("Events is empty")
+			}
 			next = events[j]
 		}
 	}

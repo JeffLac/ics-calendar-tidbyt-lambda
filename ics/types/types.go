@@ -25,11 +25,13 @@ type BaseResponse struct {
 	Error *ErrorResponse `json:"message"`
 }
 
+
+//ShowInProgress and IncludeAllDayEvents are set as pointers so that they can default to true if they are unset
 type IcsRequest struct {
 	ICSUrl         string `json:"icsUrl" validate:"required,url"`
 	TZ             string `json:"tz" validate:"required,timezone"`
-	ShowInProgress bool   `json:"showInProgress" validate:"boolean"`
-	IncludeAllDayEvents bool `json:"includeAllDayEvents" validate:"boolean"`
+	ShowInProgress *bool   `json:"showInProgress" validate:"boolean"`
+	IncludeAllDayEvents *bool `json:"includeAllDayEvents" validate:"boolean"`
 	OnlyShowAllDayEvents bool `json:"onlyShowAllDayEvents" validate:"boolean"`
 }
 
