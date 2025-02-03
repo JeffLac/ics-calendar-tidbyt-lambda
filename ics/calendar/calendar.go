@@ -122,6 +122,22 @@ func (c Calendar) NextEvent(events []t.Event, tz string, incAllDayPtr *bool, onl
 		}
 	}
 
+	if(onlyAllDay){
+		//rebuild events to only have all day events
+		var allDayEvents []t.Event
+		for _, e := range events {
+			if e.IsAllDay {
+				allDayEvents = append(allDayEvents, e)
+			}
+		}
+		events = allDayEvents
+
+		if len(events) == 0 {
+			return nil, errors.New("Events is empty")
+		}
+	}
+
+
 	//build a list of events that are in progress
 	eventsInProgress := FilterInProgress(events)
 
@@ -141,20 +157,6 @@ func (c Calendar) NextEvent(events []t.Event, tz string, incAllDayPtr *bool, onl
 		})
 	}
 
-	if(onlyAllDay){
-		//rebuild events to only have all day events
-		var allDayEvents []t.Event
-		for _, e := range events {
-			if e.IsAllDay {
-				allDayEvents = append(allDayEvents, e)
-			}
-		}
-		events = allDayEvents
-
-		if len(events) == 0 {
-			return nil, errors.New("Events is empty")
-		}
-	}
 
 	//use the first event as the next event
 	next := events[0]
