@@ -33,13 +33,13 @@ func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	// Set default for ShowInProgress if not provided
 	if event.ShowInProgress == nil {
 		defaultTrue := true
-		event.ShowInProgress = true
+		event.ShowInProgress = &defaultTrue
 	}
 
 	// Set default for IncludeAllDayEvents if not provided
 	if event.IncludeAllDayEvents == nil {
 		defaultTrue := true
-		event.IncludeAllDayEvents = true
+		event.IncludeAllDayEvents = &defaultTrue
 	}
 
 	val := validator.New()

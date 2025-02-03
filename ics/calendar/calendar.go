@@ -61,8 +61,13 @@ func (c Calendar) ParseCalendar(data string, tz string) ([]t.Event, error) {
 
 func (c Calendar) NextEvent(events []t.Event, tz string, incAllDayPtr *bool, onlyAllDay bool, showInProgressEventsPtr *bool) (*t.Event, error) {
 	//dereference the pointers
+	println(onlyAllDay)
+	println("\n\n\n")
 	showInProgressEvents := *showInProgressEventsPtr
 	incAllDay := *incAllDayPtr
+
+	println(incAllDay)
+	println("\n\n\n")
 
 	if len(events) == 0 {
 		return nil, nil
@@ -85,19 +90,37 @@ func (c Calendar) NextEvent(events []t.Event, tz string, incAllDayPtr *bool, onl
 		offset = 0
 	}
 
-	//loop through all events in slice
-    for i := range events {
-		//look for all day events
-		if (isAllDayEvent(events[i])){
-			//if event starts and ends at midnight UTC, then it is an all day event
-			//convert start and end times from UTC to the correct timezone
-			events[i].StartTime = events[i].StartTime - int64(offset)
-			events[i].EndTime = events[i].EndTime - int64(offset)
-			//IsAllDay gets set here because it can attach to the array
-			events[i].IsAllDay = true
+	// do not include All Day events
+	if(!incAllDay){
+		//look through all events
+		var notAllDayEvents []t.Event
+		for i := range events {
+			//look for events that are not all day, rebuild events slice
+			if (!isAllDayEvent(events[i])){
+				notAllDayEvents = append(notAllDayEvents, events[i])
+			}		
+		}
+		events = notAllDayEvents
 
-		}		
-    }
+		if len(events) == 0 {
+			return nil, errors.New("Events is empty")
+		}
+	}else{
+	//specifically show all day events
+		//loop through all events in slice
+		for i := range events {
+			//look for all day events
+			if (isAllDayEvent(events[i])){
+				//if event starts and ends at midnight UTC, then it is an all day event
+				//convert start and end times from UTC to the correct timezone
+				events[i].StartTime = events[i].StartTime - int64(offset)
+				events[i].EndTime = events[i].EndTime - int64(offset)
+				//IsAllDay gets set here because it can attach to the array
+				events[i].IsAllDay = true
+
+			}		
+		}
+	}
 
 	//build a list of events that are in progress
 	eventsInProgress := FilterInProgress(events)
@@ -116,6 +139,21 @@ func (c Calendar) NextEvent(events []t.Event, tz string, incAllDayPtr *bool, onl
 		sort.Slice(events, func(i, j int) bool {
 			return events[i].StartTime < events[j].StartTime
 		})
+	}
+
+	if(onlyAllDay){
+		//rebuild events to only have all day events
+		var allDayEvents []t.Event
+		for _, e := range events {
+			if e.IsAllDay {
+				allDayEvents = append(allDayEvents, e)
+			}
+		}
+		events = allDayEvents
+
+		if len(events) == 0 {
+			return nil, errors.New("Events is empty")
+		}
 	}
 
 	//use the first event as the next event
@@ -154,7 +192,6 @@ func (c Calendar) NextEvent(events []t.Event, tz string, incAllDayPtr *bool, onl
 
 	//this isn't really needed because all events are in the next week thanks to what we passed to the parser in ParseCalendar, but could eventually be useful
 	next.Detail.IsThisWeek = now < next.StartTime+7*24*60*60
-	//there's a bug here -- it is only looking to see if the event is today/tomorrow UTC
 	//adding In(location) to time.Unix which will convert the time to the correct timezone
 	next.Detail.IsToday = time.Unix(now, 0).In(location).Day() == time.Unix(next.StartTime, 0).In(location).Day()
 	next.Detail.IsTomorrow = time.Unix(now, 0).In(location).Day() == time.Unix(next.StartTime, 0).In(location).Day()-1
