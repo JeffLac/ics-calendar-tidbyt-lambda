@@ -60,6 +60,7 @@ func (c Calendar) ParseCalendar(data string, tz string) ([]t.Event, error) {
 }
 
 func (c Calendar) NextEvent(events []t.Event, tz string, incAllDayPtr *bool, onlyAllDay bool, showInProgressEventsPtr *bool) (*t.Event, error) {
+	//dereference the pointers
 	showInProgressEvents := *showInProgressEventsPtr
 	incAllDay := *incAllDayPtr
 
